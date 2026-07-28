@@ -1,3 +1,4 @@
+from django.db.migrations import serializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -14,10 +15,9 @@ class TicketViewSet(viewsets.ModelViewSet):
         if user.role in ('admin', 'agent'):
             return Ticket.objects.all().order_by('-created_at')
         return Ticket.objects.filter(created_by=user).order_by('-created_at')
-
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
-
+        
     def update(self, request, *args, **kwargs):
         ticket = self.get_object()
         user   = request.user
